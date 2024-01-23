@@ -1,13 +1,13 @@
 package steps;
 
 import io.cucumber.java.en.*;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.junit.Assert;
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
+import java.util.List;
 
 public class Elements {
     private final WebDriver driver = WebDriverConfig.getDriver();
@@ -290,4 +290,322 @@ public class Elements {
         }
     }
     // Fin Radio Button - Caso 2
+
+    // Inicio Web Tables - Caso 1
+    @When("selecciono la opción Web Tables")
+    public void selectWebTables(){
+        WebElement btnWebTables = driver.findElement(By.id("item-3"));
+        btnWebTables.click();
+    }
+
+    @Then("debo dar clic en el botón Add")
+    public void selectBtnAdd(){
+        WebElement btnAdd = driver.findElement(By.id("addNewRecordButton"));
+        btnAdd.click();
+    }
+
+    @And("debe mostrarse un modal con campos para completar")
+    public void showModalRegister(){
+        WebElement modal = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='modal-content']")));
+
+        WebElement firstNameInput = driver.findElement(By.id("firstName"));
+        WebElement lastNameInput = driver.findElement(By.id("lastName"));
+        WebElement userEmailInput = driver.findElement(By.id("userEmail"));
+        WebElement ageInput = driver.findElement(By.id("age"));
+        WebElement salaryInput = driver.findElement(By.id("salary"));
+        WebElement departmentInput = driver.findElement(By.id("department"));
+
+        firstNameInput.sendKeys("Leonardo");
+        lastNameInput.sendKeys("Bances");
+        userEmailInput.sendKeys("qa_automation_leonardo@mailinator.com");
+        ageInput.sendKeys("21");
+        salaryInput.sendKeys("50000");
+        departmentInput.sendKeys("IT");
+
+        WebElement submitButton = driver.findElement(By.id("submit"));
+        submitButton.click();
+    }
+
+    @But("verificar que los datos que se muestran en la fila de tabla sean los mismos que fueron enviados")
+    public void verifyDataTable(){
+        WebElement cuartaFila = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//div[@class='rt-tr-group'])[4]")));
+
+        List<WebElement> celdasCuartaFila = cuartaFila.findElements(By.cssSelector(".rt-td"));
+
+        String expectedFirstName = "Leonardo";
+        String expectedLastName = "Bances";
+        String expectedUserEmail = "qa_automation_leonardo@mailinator.com";
+        String expectedAge = "21";
+        String expectedSalary = "50000";
+        String expectedDepartment = "IT";
+
+        Assert.assertEquals(expectedFirstName, celdasCuartaFila.get(0).getText());
+
+        Assert.assertEquals(expectedLastName, celdasCuartaFila.get(1).getText());
+
+        Assert.assertEquals(expectedUserEmail, celdasCuartaFila.get(3).getText());
+
+        Assert.assertEquals(expectedAge, celdasCuartaFila.get(2).getText());
+
+        Assert.assertEquals(expectedSalary, celdasCuartaFila.get(4).getText());
+
+        Assert.assertEquals(expectedDepartment, celdasCuartaFila.get(5).getText());
+    }
+    // Fin Web Tables - Caso 1
+
+    // Inicio Web Tables - Caso 2
+    @Then("en el buscador escribo el nombre a buscar")
+    public void writeName(){
+        WebElement searchData = driver.findElement(By.id("searchBox"));
+        searchData.clear();
+        searchData.sendKeys("Alden");
+    }
+
+    @And("extraigo todos los datos del registro para mostrarlo en consola")
+    public void extractDataRow(){
+        WebElement cuartaFila = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//div[@class='rt-tr-group'])[1]")));
+
+        List<WebElement> celdasCuartaFila = cuartaFila.findElements(By.cssSelector(".rt-td"));
+
+        System.out.println("  First Name: " + celdasCuartaFila.get(0).getText());
+        System.out.println("  Last Name: " + celdasCuartaFila.get(1).getText());
+        System.out.println("  Age: " + celdasCuartaFila.get(2).getText());
+        System.out.println("  Email: " + celdasCuartaFila.get(3).getText());
+        System.out.println("  Salary: " + celdasCuartaFila.get(4).getText());
+        System.out.println("  Department: " + celdasCuartaFila.get(5).getText());
+    }
+    // Fin Web Tables - Caso 2
+
+    // Inicio Web Tables - Caso 3
+    @Then("doy clic en el botón Edit del segundo registro para que me muestre el modal con los datos y edito todos los datos del registro")
+    public void btnEditAndShowModal(){
+        WebElement btnEdit = driver.findElement(By.id("edit-record-2"));
+        btnEdit.click();
+
+        WebElement modal = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='modal-content']")));
+
+        WebElement nombre = driver.findElement(By.id("firstName"));
+        WebElement apellido = driver.findElement(By.id("lastName"));
+        WebElement correo = driver.findElement(By.id("userEmail"));
+        WebElement edad = driver.findElement(By.id("age"));
+        WebElement salario = driver.findElement(By.id("salary"));
+        WebElement departamento = driver.findElement(By.id("department"));
+
+        nombre.clear();
+        nombre.sendKeys("Leonardo");
+
+        apellido.clear();
+        apellido.sendKeys("Bances");
+
+        correo.clear();
+        correo.sendKeys("lbances@mailinator.com");
+
+        edad.clear();
+        edad.sendKeys("21");
+
+        salario.clear();
+        salario.sendKeys("3200");
+
+        departamento.clear();
+        departamento.sendKeys("QA Automation");
+
+        WebElement btnSutmit = driver.findElement(By.id("submit"));
+        btnSutmit.click();
+    }
+
+    @And("valido que los nuevos datos sean los correctos")
+    public void validateNewData(){
+        WebElement cuartaFila = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//div[@class='rt-tr-group'])[2]")));
+
+        List<WebElement> celdasCuartaFila = cuartaFila.findElements(By.cssSelector(".rt-td"));
+
+        String expectedFirstName = "Leonardo";
+        String expectedLastName = "Bances";
+        String expectedUserEmail = "lbances@mailinator.com";
+        String expectedAge = "21";
+        String expectedSalary = "3200";
+        String expectedDepartment = "QA Automation";
+
+        Assert.assertEquals(expectedFirstName, celdasCuartaFila.get(0).getText());
+
+        Assert.assertEquals(expectedLastName, celdasCuartaFila.get(1).getText());
+
+        Assert.assertEquals(expectedUserEmail, celdasCuartaFila.get(3).getText());
+
+        Assert.assertEquals(expectedAge, celdasCuartaFila.get(2).getText());
+
+        Assert.assertEquals(expectedSalary, celdasCuartaFila.get(4).getText());
+
+        Assert.assertEquals(expectedDepartment, celdasCuartaFila.get(5).getText());
+    }
+    // Fin Web Tables - Caso 3
+
+    // Inicio Links - Caso 1
+    @When("selecciono la opción Links")
+    public void selectLinksOption(){
+        WebElement btnLinksOption = driver.findElement(By.id("item-5"));
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].scrollIntoView(true);", btnLinksOption);
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        WebElement clickableBtnLinks = wait.until(ExpectedConditions.elementToBeClickable(btnLinksOption));
+        clickableBtnLinks.click();
+    }
+
+    @Then("debo seleccionar el textlink Home para que me redireccione al home de Demo QA")
+    public void redirectHomeDemoQA(){
+        WebElement textLinkHome = driver.findElement(By.linkText("Home"));
+        textLinkHome.click();
+    }
+
+    @And("debe mostrarse el logo de Demo QA")
+    public void validateHomeDemoQA(){
+        WebElement imageDemoQA = driver.findElement(By.xpath("//img[@src='/images/Toolsqa.jpg']"));
+        if(imageDemoQA.isDisplayed()){
+            System.out.println("  Ingresamos a la home Demo QA");
+        }
+        else{
+            System.out.println("  No ingresamos a la home Demo QA");
+        }
+    }
+    // Fin Links - Caso 1
+
+    // Inicio Links - Caso 2
+    @Then("doy clic en el textlink Created")
+    public void textlinkCreated(){
+        WebElement textLinkCreated = driver.findElement(By.linkText("Created"));
+        textLinkCreated.click();
+    }
+
+    @And("me mostrará el mensaje correspondiente a Created")
+    public void showMessageCreated(){
+        WebElement messageCreated = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("linkResponse")));
+
+        String messageCreated_Obtenido = messageCreated.getText();
+        String messageCreated_Esperado = "Link has responded with staus 201 and status text Created";
+
+        Assert.assertEquals(messageCreated_Esperado, messageCreated_Obtenido);
+    }
+    // Fin Links - Caso 2
+
+    // Inicio Links - Caso 3
+    @Then("doy clic en el textlink No Content")
+    public void textlinkNoContent(){
+        WebElement textLinkNoContent = driver.findElement(By.linkText("No Content"));
+        textLinkNoContent.click();
+    }
+
+    @And("me mostrará el mensaje correspondiente a No Content")
+    public void showMessageNoContent(){
+        WebElement messageNoContent = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("linkResponse")));
+
+        String messageNoContent_Obtenido = messageNoContent.getText();
+        String messageNoContent_Esperado = "Link has responded with staus 204 and status text No Content";
+
+        Assert.assertEquals(messageNoContent_Esperado, messageNoContent_Obtenido);
+    }
+    // Fin Links - Caso 3
+
+    // Inicio Links - Caso 4
+    @Then("doy clic en el textlink Moved")
+    public void textlinkMoved(){
+        WebElement textLinkMoved = driver.findElement(By.linkText("Moved"));
+        textLinkMoved.click();
+    }
+
+    @And("me mostrará el mensaje correspondiente a Moved")
+    public void showMessageMoved(){
+        WebElement messageMoved = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("linkResponse")));
+
+        String messageMoved_Obtenido = messageMoved.getText();
+        String messageMoved_Esperado = "Link has responded with staus 301 and status text Moved Permanently";
+
+        Assert.assertEquals(messageMoved_Esperado, messageMoved_Obtenido);
+    }
+    // Fin Links - Caso 4
+
+    // Inicio Links - Caso 5
+    @Then("doy clic en el textlink Bad Request")
+    public void textlinkBadRequest(){
+        WebElement textLinkBadRequest = driver.findElement(By.linkText("Bad Request"));
+        textLinkBadRequest.click();
+    }
+
+    @And("me mostrará el mensaje correspondiente a Bad Request")
+    public void showMessageBadRequest(){
+        WebElement messageBadRequest = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("linkResponse")));
+
+        String messageBadRequest_Obtenido = messageBadRequest.getText();
+        String messageBadRequest_Esperado = "Link has responded with staus 400 and status text Bad Request";
+
+        Assert.assertEquals(messageBadRequest_Esperado, messageBadRequest_Obtenido);
+    }
+    // Fin Links - Caso 5
+
+    // Inicio Links - Caso 6
+    @Then("doy clic en el textlink Unauthorized")
+    public void textlinkUnauthorized(){
+        WebElement textLinkUnauthorized = driver.findElement(By.linkText("Unauthorized"));
+        textLinkUnauthorized.click();
+    }
+
+    @And("me mostrará el mensaje correspondiente a Unauthorized")
+    public void showMessageUnauthorized(){
+        WebElement messageUnauthorized = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("linkResponse")));
+
+        String messageUnauthorized_Obtenido = messageUnauthorized.getText();
+        String messageUnauthorized_Esperado = "Link has responded with staus 401 and status text Unauthorized";
+
+        Assert.assertEquals(messageUnauthorized_Esperado, messageUnauthorized_Obtenido);
+    }
+    // Fin Links - Caso 6
+
+    // Inicio Links - Caso 7
+    @Then("doy clic en el textlink Forbidden")
+    public void textlinkForbidden(){
+        WebElement textLinkForbidden = driver.findElement(By.linkText("Forbidden"));
+        textLinkForbidden.click();
+    }
+
+    @And("me mostrará el mensaje correspondiente a Forbidden")
+    public void showMessageForbidden(){
+        WebElement messageForbidden = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("linkResponse")));
+
+        String messageForbidden_Obtenido = messageForbidden.getText();
+        String messageForbidden_Esperado = "Link has responded with staus 403 and status text Forbidden";
+
+        Assert.assertEquals(messageForbidden_Esperado, messageForbidden_Obtenido);
+    }
+    // Fin Links - Caso 7
+
+    // Inicio Links - Caso 8
+    @Then("doy clic en el textlink Not Found")
+    public void textlinkNotFound(){
+        WebElement textLinkNotFound = driver.findElement(By.linkText("Not Found"));
+        textLinkNotFound.click();
+    }
+
+    @And("me mostrará el mensaje correspondiente a Not Found")
+    public void showMessageNotFound(){
+        WebElement messageNotFound = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("linkResponse")));
+
+        String messageNotFound_Obtenido = messageNotFound.getText();
+        String messageNotFound_Esperado = "Link has responded with staus 404 and status text Not Found";
+
+        Assert.assertEquals(messageNotFound_Esperado, messageNotFound_Obtenido);
+    }
+    // Fin Links - Caso 8
 }
